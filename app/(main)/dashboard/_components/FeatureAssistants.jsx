@@ -12,7 +12,7 @@ export const FeatureAssistants = () => {
     return (
         <div className="flex flex-row justify-between items-center w-screen">
            
-            <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4
+            <div className="grid grid-cols-2 lg:grid-cols-5 xl:grid-cols-6
              gap-5">
                 {CoachingOptions.map((option, index) => (
                     <BlurFade key={option.icon} delay={0.25 + index * 0.05} inView>

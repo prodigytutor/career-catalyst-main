@@ -17,6 +17,17 @@ import { useState } from "react"
 
 export function UserInputDialog({children, coachingOption}) {
   const [selectedExpert, setSelectedExpert] = useState(null)
+  const {topic, setTopic} = useState(null)
+  const createDiscussionRoom = useMutation(api.discussionRoom.createNewRoom);
+
+  const onClickNext = async () => {
+    const ressult = await createDiscussionRoom({
+      coachingOptions: coachingOption?.name,
+      topic: topic,
+      expertName: selectedExpert,
+    });
+  }
+  
   return (
     <Dialog>
       <DialogTrigger>
@@ -31,7 +42,7 @@ export function UserInputDialog({children, coachingOption}) {
               <h2 className="">
                 Enter topic you wish to master your skills in {coachingOption.name}
               </h2>
-              <Textarea placeholder="e.g. React, JavaScript, CSS" className="mt-2" />
+              <Textarea placeholder="e.g. React, JavaScript, CSS" className="mt-2" onChange={() => setTopic(e.target.value)}/>
               <h2 className="mt-4">
                 Select your AI coach
               </h2>
@@ -46,6 +57,9 @@ export function UserInputDialog({children, coachingOption}) {
                 ))  
                 }
               </div>
+              <div className="flex gap-5 mt-5 justify-end">
+                <Label htmlFor="message">Message</Label>
+                <Textarea id="message" placeholder="Type your message here..." className="mt-2" />
             </div>
           </DialogDescription>
         </DialogHeader>
@@ -53,6 +67,6 @@ export function UserInputDialog({children, coachingOption}) {
           <Button type="submit">Save changes</Button>
         </DialogFooter>
       </DialogContent> 
-k     </Dialog>
+     </Dialog>
   )
 }
