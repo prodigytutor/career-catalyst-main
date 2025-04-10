@@ -1,6 +1,8 @@
+"use client"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -12,24 +14,39 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { CoachingExpert } from "@/services/Options"
+import { api } from "@/convex/_generated/api"
 import Image from "next/image"
 import { useState } from "react"
+import { useMutation } from "convex/react"
+import { useUser } from "@stackframe/stack";
+import { set } from "date-fns"
+import { useRouter } from "next/navigation"
 
-export function UserInputDialog({children, coachingOption}) {
-  const [selectedExpert, setSelectedExpert] = useState(null)
-  const {topic, setTopic} = useState(null)
+export function UserInputDialog({children, coachingOption, user}) {
+  console.log("user input user", user?.user?.id)
+  //const userid = await useUser().id
+  const [topic, setTopic] = useState()
+  const [selectedExpert, setSelectedExpert] = useState()
   const createDiscussionRoom = useMutation(api.discussionRoom.createNewRoom);
-
+  const [loading, setLoading] = useState(false)
+  const [openDialog, setOpenDialog] = useState(false)
+  const router = useRouter()
   const onClickNext = async () => {
-    const ressult = await createDiscussionRoom({
+    setLoading(true)
+    const result = await createDiscussionRoom({
       coachingOptions: coachingOption?.name,
       topic: topic,
       expertName: selectedExpert,
+      userId: user?.user?.id,
     });
+    setLoading(false)
+    setOpenDialog(false)
+    console.log("createDiscussionRoom result", result)
+    router.push(`/discussion-room/${result}`)
   }
-  
+
   return (
-    <Dialog>
+    <Dialog ope={openDialog} onOpenChange={setOpenDialog}>
       <DialogTrigger>
         {/* <Button variant="outline">{children}</Button> */}
         {children}
@@ -42,7 +59,7 @@ export function UserInputDialog({children, coachingOption}) {
               <h2 className="">
                 Enter topic you wish to master your skills in {coachingOption.name}
               </h2>
-              <Textarea placeholder="e.g. React, JavaScript, CSS" className="mt-2" onChange={() => setTopic(e.target.value)}/>
+              <Textarea placeholder="e.g. React, JavaScript, CSS" className="mt-2" onChange={(e) => setTopic(e.target.value)}/>
               <h2 className="mt-4">
                 Select your AI coach
               </h2>
@@ -58,14 +75,21 @@ export function UserInputDialog({children, coachingOption}) {
                 }
               </div>
               <div className="flex gap-5 mt-5 justify-end">
-                <Label htmlFor="message">Message</Label>
-                <Textarea id="message" placeholder="Type your message here..." className="mt-2" />
+                <DialogClose asChild>
+                   <Button variant="ghost">Cancel</Button>
+                   </DialogClose>
+          <Button disabled={(!topic || !selectedExpert || loading)} variant="outline" onClick={onClickNext}>
+            {loading ? <Image src="/loading.svg" alt="Loading" width={20} height={20} className="animate-spin" /> : "Next"}
+            </Button>
+             
             </div>
+            </div>
+              
           </DialogDescription>
         </DialogHeader>
-        <DialogFooter>
+        {/* <DialogFooter>
           <Button type="submit">Save changes</Button>
-        </DialogFooter>
+        </DialogFooter> */}
       </DialogContent> 
      </Dialog>
   )

@@ -7,8 +7,8 @@ import { BlurFade } from "@/components/magicui/blur-fade";
 import { View } from 'lucide-react';
 import Image from 'next/image';
 import { UserInputDialog } from './UserInputDialog';
-export const FeatureAssistants = () => {
-    const user = useUser();
+export const FeatureAssistants = (user) => {
+    console.log("feature assistant user", user?.user?.id)
     return (
         <div className="flex flex-row justify-between items-center w-screen">
            
@@ -16,7 +16,7 @@ export const FeatureAssistants = () => {
              gap-5">
                 {CoachingOptions.map((option, index) => (
                     <BlurFade key={option.icon} delay={0.25 + index * 0.05} inView>
-                        <UserInputDialog coachingOption={option}>
+                        <UserInputDialog coachingOption={option} user={user}>
 
                             <div key={index} className="flex flex-col justify-center items-center bg-white shadow-sm rounded-lg p-2 mt-2 hover:shadow-md transition duration-300 ease-in-out cursor-pointer">
 
