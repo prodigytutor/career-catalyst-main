@@ -26,9 +26,11 @@ const DiscussionRoom = () => {
   let silenceTimeout = 2000;
   console.log("discussionRoomData", discussionRoomData)
   useEffect(() => {
-    const expert = CoachingExpert.find((expert) => expert.name === discussionRoomData?.expertName)
-    console.log("expert", expert)
-    setExpert(expert); 
+    if (discussionRoomData) {
+      const expert = CoachingExpert.find((expert) => expert.name === discussionRoomData?.expertName)
+      console.log("expert", expert)
+      setExpert(expert);
+    }
   }, [discussionRoomData])
   const startRecording = async () => {
     try {
@@ -39,6 +41,7 @@ const DiscussionRoom = () => {
       mediaRecorder.ondataavailable = (event) => {
         if (event.data.size > 0) {
           setAudioChunks((prevChunks) => [...prevChunks, event.data]);
+          console.log("audio chunks", audioChunks)
         }
       };
 
@@ -64,7 +67,7 @@ const DiscussionRoom = () => {
   };
 
   const ConnectToServer = () => {
-     startRecording();
+    startRecording();
     setEnableMicrophone(true);
   }
   const disconnect = (e) => {
@@ -139,9 +142,9 @@ const DiscussionRoom = () => {
             {!enableMicrophone ? <Button variant="outline" className='mt-5 flex items-center justify-center' onClick={ConnectToServer}>
               Join Discussion Room
             </Button>
-            : <Button variant="destructive" className='mt-5 flex items-center justify-center' onClick={disconnect}>
-              Leave Discussion Room
-            </Button>} 
+              : <Button variant="destructive" className='mt-5 flex items-center justify-center' onClick={disconnect}>
+                Leave Discussion Room
+              </Button>}
           </div>
         </div>
         <div>
